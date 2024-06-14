@@ -7,7 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Facebook, Instagram, Linkedin } from "lucide-react";
+import {  Instagram, Linkedin } from "lucide-react";
 
 interface TeamProps {
   imageUrl: string;
@@ -24,7 +24,7 @@ interface SociaNetworkslProps {
 
 const teamList: TeamProps[] = [
   {
-    imageUrl: "https://media.licdn.com/dms/image/D4D03AQE2-wdkY6yEuA/profile-displayphoto-shrink_800_800/0/1705437751690?e=1723680000&v=beta&t=wTK6EKxFqaXDurxlW0xM0b3x3hrwPHK3ez6aayG9I-k",
+    imageUrl: "https://wallpapers.com/images/hd/cool-anime-boy-pfp-osamu-dazai-qfzjabg10aq6pak9.jpg",
     name: "Harsh Patel",
     position: "Team Lead",
     description: "Guiding visionary teams to deliver exceptional outcomes, fostering collaboration and innovation to achieve strategic goals effectively",
@@ -37,7 +37,7 @@ const teamList: TeamProps[] = [
     ],
   },
   {
-    imageUrl: "https://media.licdn.com/dms/image/D4D35AQGGOGwVD8wi_A/profile-framedphoto-shrink_800_800/0/1702410196521?e=1718967600&v=beta&t=S-LdBwpOcpqmwFEAzPnpVkNnZ8ogIheRhNeeihVyYr0",
+    imageUrl: "https://wallpapers.com/images/hd/cool-anime-boy-pfp-osamu-dazai-qfzjabg10aq6pak9.jpg",
     name: "Shivansh Mahajan",
     position: "AI/ML Lead",
     description: "Pioneering advancements in artificial intelligence and machine learning, transforming complex data into actionable insights and predictive models.",
@@ -50,7 +50,7 @@ const teamList: TeamProps[] = [
     ],
   },
   {
-    imageUrl: "https://media.licdn.com/dms/image/D4D03AQGKX9kumw_STg/profile-displayphoto-shrink_200_200/0/1708521678033?e=2147483647&v=beta&t=06FJ_3SyuOwcDCfp1U2bmMEwvbd4Kh2PDtZ7ZDj7MCk",
+    imageUrl: "https://wallpapers.com/images/hd/cool-anime-boy-pfp-osamu-dazai-qfzjabg10aq6pak9.jpg",
     name: "Vansh Verma",
     position: "Web Developer",
     description: "Building captivating web experiences with intuitive user interfaces, blending creativity with technical expertise for optimal digital presence.",
