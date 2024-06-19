@@ -96,7 +96,6 @@ export const config: NextAuthConfig = {
                 const emails = await response.json();
                 const accessToken = token.access_token;
 
-                // Collect email details in an array
                 const emailDetails: {
                     subject: string;
                     snippet: string;
@@ -118,7 +117,6 @@ export const config: NextAuthConfig = {
                     );
                     const emailData = await emailResponse.json();
 
-                    // Extract email details
                     const subjectHeader = emailData.payload.headers.find(
                         (header: any) => header.name === "Subject"
                     );
@@ -133,7 +131,6 @@ export const config: NextAuthConfig = {
                         )?.value || "Unknown";
                     let body = "No Body";
 
-                    // Extract body
                     const parts = emailData.payload.parts;
                     if (parts) {
                         const part = parts.find(
@@ -160,9 +157,9 @@ export const config: NextAuthConfig = {
                     console.log(`Email Subject: ${subject}`);
                 });
 
-                // Wait for all promises to resolve
                 await Promise.all(promises);
 
+                // All the data is in emailDetails we can use as we like
                 const redisClient = await client;
 
                 return {
