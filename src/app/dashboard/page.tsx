@@ -1,3 +1,5 @@
+"use client"
+
 import Link from "next/link"
 import {
     Activity,
@@ -43,8 +45,43 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
+import {getSession, signOut, useSession} from "next-auth/react";
+import {useDispatch, useSelector} from "react-redux";
+import {RootState} from "@/provider/redux/store";
+import {ChangeToken} from "@/provider/redux/SetToken";
+import {ChangeEmail} from "@/provider/redux/SetEmail";
+import {useEffect} from "react";
+import {Session} from "next-auth";
+import {EnrichedSession} from "@/utils/authOptions";
 
+interface ExtendedSession extends Session {
+    accessToken?: string;
+    refreshToken?: string;
+    accessTokenIssuedAt?: number;
+    accessTokenExpiresAt?: number;
+}
 export default function Dashboard() {
+    const dispatch = useDispatch();
+    const { data: session, status } = useSession() as { data: EnrichedSession | null, status: string };
+
+    useEffect(() => {
+        if (status === 'authenticated' && session?.user?.email) {
+            console.log("Session Data:", session);
+            dispatch(ChangeEmail(session.user.email));
+            if (session.accessToken) {
+                dispatch(ChangeToken(session.accessToken));
+            } else {
+                console.error("AccessToken not found in session");
+            }
+        }
+    }, [status, session, dispatch]);
+
+    const accountName = useSelector((state: RootState) => state.SetEmail.email);
+    const token = useSelector((state: RootState)=>state.SetToken.token);
+    console.log(accountName)
+    console.log(token)
+
+    const signOutHandler = () => signOut({ callbackUrl: "/" })
     return (
         <div className="flex min-h-screen w-full flex-col">
             <header className="sticky top-0 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6">
@@ -158,10 +195,7 @@ export default function Dashboard() {
                         <DropdownMenuContent align="end">
                             <DropdownMenuLabel>My Account</DropdownMenuLabel>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem>Settings</DropdownMenuItem>
-                            <DropdownMenuItem>Support</DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem>Logout</DropdownMenuItem>
+                            <DropdownMenuItem onClick={signOutHandler}>Logout</DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
                 </div>
