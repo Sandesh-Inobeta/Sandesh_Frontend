@@ -84,6 +84,87 @@ export const config: NextAuthConfig = {
         },
         async session({ session, token }) {
             try {
+                const response = await fetch(
+                    "https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=75&metadata.headers",
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token.access_token}`,
+                            "Content-Type": "application/json",
+                        },
+                    }
+                );
+                const emails = await response.json();
+                const accessToken = token.access_token;
+
+                // Collect email details in an array
+                const emailDetails: {
+                    subject: string;
+                    snippet: string;
+                    body: string;
+                    sender: string;
+                    recipient: string;
+                }[] = [];
+
+                // Batch processing to fetch emails in batches
+                const promises = emails.messages.map(async (message: any) => {
+                    const emailResponse = await fetch(
+                        `https://gmail.googleapis.com/gmail/v1/users/me/messages/${message.id}`,
+                        {
+                            headers: {
+                                Authorization: `Bearer ${token.access_token}`,
+                                "Content-Type": "application/json",
+                            },
+                        }
+                    );
+                    const emailData = await emailResponse.json();
+
+                    // Extract email details
+                    const subjectHeader = emailData.payload.headers.find(
+                        (header: any) => header.name === "Subject"
+                    );
+                    const subject = subjectHeader ? subjectHeader.value : "No Subject";
+                    const sender =
+                        emailData.payload.headers.find(
+                            (header: any) => header.name === "From"
+                        )?.value || "Unknown";
+                    const recipient =
+                        emailData.payload.headers.find(
+                            (header: any) => header.name === "To"
+                        )?.value || "Unknown";
+                    let body = "No Body";
+
+                    // Extract body
+                    const parts = emailData.payload.parts;
+                    if (parts) {
+                        const part = parts.find(
+                            (part: { mimeType: string }) =>
+                                part.mimeType === "text/plain" || part.mimeType === "text/html"
+                        );
+                        if (part && part.body && part.body.data) {
+                            const bodyData = part.body.data;
+                            body = Buffer.from(bodyData, "base64").toString("utf-8");
+                        }
+                    } else if (emailData.payload.body && emailData.payload.body.data) {
+                        const bodyData = emailData.payload.body.data;
+                        body = Buffer.from(bodyData, "base64").toString("utf-8");
+                    }
+
+                    emailDetails.push({
+                        subject,
+                        snippet: emailData.snippet,
+                        body,
+                        sender,
+                        recipient,
+                    });
+
+                    console.log(`Email Subject: ${subject}`);
+                });
+
+                // Wait for all promises to resolve
+                await Promise.all(promises);
+
+                const redisClient = await client;
+
                 return {
                     ...session,
                     accessToken: String(token.access_token),
